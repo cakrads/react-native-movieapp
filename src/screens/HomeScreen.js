@@ -1,4 +1,4 @@
-import React, {useEffect, useCallback} from 'react';
+import React, {useEffect, useCallback, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   SafeAreaView,
@@ -24,10 +24,15 @@ import SimpleCarousel from './../components/carousel/SimpleCarousel';
 import HorizontalCard from './../components/card/HorizontalCard';
 import HorizontalCardV2 from './../components/card/HorizontalCardV2';
 import HorizontalBadge from '../components/badge/HorizontalBadge';
+import LoadingIndicator from '../components/loading/LoadingActivity';
 
-const HomeScreen = () => {
+const HomeScreen = props => {
   const dispatch = useDispatch();
   const movieData = useSelector(state => state.movieReducer);
+
+  const [inTheaterLoading, setInTheaterLoading] = useState(true);
+  const [popularLoading, setPopularLoading] = useState(true);
+  const [genreLoading, setGenreLoading] = useState(true);
 
   const deviceHeight = Dimensions.get('window').height;
   const carouselImages = [
@@ -36,17 +41,21 @@ const HomeScreen = () => {
     'https://s-media-cache-ak0.pinimg.com/originals/8d/1a/da/8d1adab145a2d606c85e339873b9bb0e.jpg',
   ];
 
+  // INIT PAGE DATA
   useEffect(() => {
     inTheaterMovie();
     popularMovie();
-    allGenreMovie();
+    GenrereMovie();
     // detailMovie();
   }, []);
 
   const popularMovie = useCallback(async () => {
     try {
-      dispatch(getMoviePopular(true));
+      setPopularLoading(true);
+      await dispatch(getMoviePopular(true));
+      setPopularLoading(false);
     } catch (error) {
+      setPopularLoading(false);
       console.log('popularMovie: ', error);
       Alert.alert('Something Wrong');
     }
@@ -54,17 +63,23 @@ const HomeScreen = () => {
 
   const inTheaterMovie = useCallback(async () => {
     try {
-      dispatch(getMovieInTheater(true));
+      setInTheaterLoading(true);
+      await dispatch(getMovieInTheater(true));
+      setInTheaterLoading(false);
     } catch (error) {
+      setInTheaterLoading(false);
       console.log('inTheaterMovie: ', error);
       Alert.alert('Something Wrong');
     }
   });
 
-  const allGenreMovie = useCallback(async () => {
+  const GenrereMovie = useCallback(async () => {
     try {
-      dispatch(getGenreAll());
+      setGenreLoading(true);
+      await dispatch(getGenreAll());
+      setGenreLoading(false);
     } catch (error) {
+      setGenreLoading(false);
       console.log('inTheaterMovie: ', error);
       Alert.alert('Something Wrong Genre');
     }
@@ -78,6 +93,12 @@ const HomeScreen = () => {
   //     Alert.alert('Something Wrong');
   //   }
   // });
+  // END INIT PAGE DATA
+
+  // ACTION
+
+
+  // SHOW COMPONENT
   return (
     <>
       <SafeAreaView>
@@ -92,7 +113,9 @@ const HomeScreen = () => {
             {/* IN THEATHER MOVIE */}
             <View style={styles.titleSubPart}>
               <Text style={styles.titleSubPartText}>Now Showing</Text>
-              <TouchableOpacity style={styles.titleSubPartButton}>
+              <TouchableOpacity
+                style={styles.titleSubPartButton}
+                onPress={() => goTo('Detail')}>
                 <Text>
                   See All{' '}
                   <Ionicons
@@ -103,23 +126,41 @@ const HomeScreen = () => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <HorizontalCardV2 data={movieData.inTheatre.list} />
+            {inTheaterLoading ? (
+              <LoadingIndicator />
+            ) : (
+              <HorizontalCardV2
+                data={movieData.inTheatre.list}
+                clickAction={goToDetail}
+              />
+            )}
+
             {/* END THEATHER MOVIE */}
 
             {/* POPULAR MOVIE */}
             <View style={styles.titleSubPart}>
               <Text style={styles.titleSubPartText}>Popular Movie</Text>
-              <TouchableOpacity style={styles.titleSubPartButton}>
+              <TouchableOpacity
+                style={styles.titleSubPartButton}
+                onPress={() => goTo('Detail')}>
                 <Text>
                   See All <Ionicons name="md-checkmark-circle" size={16} />
                 </Text>
               </TouchableOpacity>
             </View>
-            <HorizontalCard data={movieData.popular.list} />
+            {popularLoading ? (
+              <LoadingIndicator />
+            ) : (
+              <HorizontalCard data={movieData.popular.list} />
+            )}
             {/* END POPULAR MOVIE */}
-            
+
             {/* MOVIE GENRE */}
-            <HorizontalBadge data={movieData.genre} />
+            {genreLoading ? (
+              <LoadingIndicator />
+            ) : (
+              <HorizontalBadge data={movieData.genre} />
+            )}
             {/* END MOVIE GENRE */}
           </View>
         </ScrollView>
