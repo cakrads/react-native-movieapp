@@ -1,29 +1,19 @@
 import * as TYPE from './type';
 import * as API from '../../api';
 
-export const getMoviePopular = (firstInit = false) => {
+export const getMoviePopular = () => {
   return async (dispatch, getState) => {
     try {
-      let page = firstInit ? 1 : getState().movieReducer.page;
-      let param = {page: page};
+      dispatch({
+        type: TYPE.SET_MOVIE_POPULAR_LIST_RESET,
+      });
 
-      if (firstInit) {
-        dispatch({
-          type: TYPE.SET_MOVIE_POPULAR_LIST_RESET,
-        });
-      }
-
-      const response = await API.getMoviePopular(param);
+      const response = await API.getMoviePopular({page: 1});
 
       dispatch({
         type: TYPE.SET_MOVIE_POPULAR_LIST,
         data: response.results,
-        page: page + 1,
       });
-      // console.log(
-      //   'getState().movieReducer: ',
-      //   getState().movieReducer.popular.list,
-      // );
 
       return {
         status: true,
@@ -38,22 +28,50 @@ export const getMoviePopular = (firstInit = false) => {
   };
 };
 
-export const getMovieInTheater = (firstInit = false) => {
+export const getMovieInTheater = () => {
   return async (dispatch, getState) => {
     try {
-      let page = firstInit ? 1 : getState().movieReducer.page;
-      let param = {page: page};
+      dispatch({
+        type: TYPE.SET_MOVIE_THEATER_LIST_RESET,
+      });
 
-      if (firstInit) {
-        dispatch({
-          type: TYPE.SET_MOVIE_THEATER_LIST_RESET,
-        });
-      }
-
-      const response = await API.getMovieInTheater(param);
+      const response = await API.getMovieInTheater({page: 1});
 
       dispatch({
         type: TYPE.SET_MOVIE_THEATER_LIST,
+        data: response.results,
+      });
+      // console.log('getState().movieReducer: ', getState().movieReducer);
+
+      return {
+        status: true,
+        message: 'success',
+      };
+    } catch (error) {
+      throw {
+        status: false,
+        message: error,
+      };
+    }
+  };
+};
+
+export const getGlobalList = (firstInit = false, data) => {
+  return async (dispatch, getState) => {
+    try {
+      let page = firstInit ? 1 : getState().movieReducer.globalList.page;
+      let params = {...data, page: page};
+      console.log("params", params)
+      if (firstInit) {
+        dispatch({
+          type: TYPE.SET_MOVIE_LIST_RESET,
+        });
+      }
+
+      const response = await API.getGlobalList(params);
+
+      dispatch({
+        type: TYPE.SET_MOVIE_LIST,
         data: response.results,
         page: page + 1,
       });

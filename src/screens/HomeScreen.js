@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {globalStyle} from './../theme/style';
 
 import {
   getMoviePopular,
@@ -96,7 +97,14 @@ const HomeScreen = props => {
   // END INIT PAGE DATA
 
   // ACTION
+  const goTo = (page, param = {}) => {
+    props.navigation.navigate(page, param);
+  };
 
+  const goToDetail = param => {
+    console.log('goToDetail: ', param);
+    props.navigation.navigate('Detail', {data: {movieID: param}});
+  };
 
   // SHOW COMPONENT
   return (
@@ -109,7 +117,7 @@ const HomeScreen = props => {
           {/* CAROUSEL */}
           <SimpleCarousel images={carouselImages} />
 
-          <View style={styles.container}>
+          <View style={globalStyle.container}>
             {/* IN THEATHER MOVIE */}
             <View style={styles.titleSubPart}>
               <Text style={styles.titleSubPartText}>Now Showing</Text>
@@ -130,7 +138,7 @@ const HomeScreen = props => {
               <LoadingIndicator />
             ) : (
               <HorizontalCardV2
-                data={movieData.inTheatre.list}
+                data={movieData.inTheatre}
                 clickAction={goToDetail}
               />
             )}
@@ -151,7 +159,7 @@ const HomeScreen = props => {
             {popularLoading ? (
               <LoadingIndicator />
             ) : (
-              <HorizontalCard data={movieData.popular.list} />
+              <HorizontalCard data={movieData.popular} />
             )}
             {/* END POPULAR MOVIE */}
 
@@ -170,9 +178,6 @@ const HomeScreen = props => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-  },
   titleSubPart: {
     justifyContent: 'space-between',
     flexDirection: 'row',

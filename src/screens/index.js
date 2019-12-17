@@ -1,10 +1,28 @@
 import React from 'react';
 import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
-import {Text, View} from 'react-native';
+import {Text, View, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import HomeScreen from './HomeScreen';
 import AboutScreen from './AboutScreen';
+import DetailMovieScreen from './DetailMovieScreen';
+import ListMovieScreen from './ListMovieScreen';
+
+const BackButton = props => {
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        if (props.routeBack) {
+          props.navigation.navigate(props.routeBack);
+        } else {
+          props.navigation.goBack();
+        }
+      }}>
+      <Text> &lt; {props.backTitleTxt}</Text>
+    </TouchableOpacity>
+  );
+};
 
 class IconWithBadge extends React.Component {
   render() {
@@ -58,11 +76,30 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
   return <IconComponent name={iconName} size={25} color={tintColor} />;
 };
 
+const DetailMovieNavigation = createStackNavigator({
+  DetailMovieScreen: {
+    screen: DetailMovieScreen,
+    navigationOptions: ({navigation}) => ({
+      headerLeft: (
+        <BackButton
+          kurma={true}
+          navigation={navigation}
+          routeBack={'Home'}
+          backTitleTxt={'Beranda Mashara'}
+        />
+      ),
+      // headerStyle: {backgroundColor: Colors.kurma_profile_background},
+    }),
+  },
+});
+
 export default createAppContainer(
   createBottomTabNavigator(
     {
+      List: ListMovieScreen,
       Home: {screen: HomeScreen},
       About: {screen: AboutScreen},
+      Detail: DetailMovieNavigation,
     },
     {
       defaultNavigationOptions: ({navigation}) => ({

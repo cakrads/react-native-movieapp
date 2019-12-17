@@ -1,10 +1,9 @@
 import api from '../helpers/api';
 import APIPATH, {BASE_URL, API_KEY} from './path';
 
-export const getMoviePopular = async params => {
+export const getMoviePopular = async () => {
   try {
-    params = {
-      ...params,
+    let params = {
       ...APIPATH.movie.popular,
       ...API_KEY,
     };
@@ -15,12 +14,33 @@ export const getMoviePopular = async params => {
   }
 };
 
-export const getMovieInTheater = async params => {
+export const getMovieInTheater = async () => {
   try {
-    params = {
-      ...params,
+    let params = {
       ...API_KEY,
-      ...APIPATH.movie.inTheatre,
+      ...addParams,
+    };
+    const API = new api();
+    return await API.get(`${BASE_URL}${APIPATH.movie.main}`, params);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getGlobalList = async params => {
+  try {
+    let addParams =
+      params.type === 'inTheater'
+        ? APIPATH.movie.inTheatre
+        : params.type === 'popular'
+        ? APIPATH.movie.popular
+        : params.type === 'genre'
+        ? {...params}
+        : {};
+
+    params = {
+      ...addParams,
+      ...API_KEY,
     };
     const API = new api();
     return await API.get(`${BASE_URL}${APIPATH.movie.main}`, params);

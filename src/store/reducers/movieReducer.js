@@ -8,31 +8,35 @@ const movieReducer = (state = movieState, action) => {
     case TYPES.SET_MOVIE_POPULAR_LIST:
       return {
         ...state,
-        popular: {
-          list: action.data,
-          page: action.page,
-        },
+        popular: action.data,
       };
     case TYPES.SET_MOVIE_POPULAR_LIST_RESET:
       return {
         ...state,
-        popular: {
-          list: null,
-          page: 1,
-        },
+        popular: null,
       };
     case TYPES.SET_MOVIE_THEATER_LIST:
       return {
         ...state,
-        inTheatre: {
-          list: action.data,
-          page: action.page,
-        },
+        inTheatre: action.data,
       };
     case TYPES.SET_MOVIE_THEATER_LIST_RESET:
       return {
         ...state,
-        inTheatre: {
+        inTheatre: null,
+      };
+    case TYPES.SET_MOVIE_LIST:
+      return {
+        ...state,
+        globalList: {
+          list: action.data,
+          page: action.page,
+        },
+      };
+    case TYPES.SET_MOVIE_LIST_RESET:
+      return {
+        ...state,
+        globalList: {
           list: null,
           page: 1,
         },

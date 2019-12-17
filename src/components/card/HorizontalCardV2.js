@@ -5,22 +5,25 @@ import {
   StyleSheet,
   FlatList,
   Image,
-  Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import globalStyle from './../../theme/style';
 import {dateFormater} from './../../helpers/date';
 
-const deviceWidth = Dimensions.get('window').width;
-
 const HorizontalCardV2 = props => {
+  // console.log('HorizontalCardV2', props);
   const Card = ({data}) => {
     // console.log('data', data);
     return (
       <View style={styles.card}>
-        <Image
-          source={{uri: `https://image.tmdb.org/t/p/w200/${data.poster_path}`}}
-          style={styles.cardImage}
-        />
+        <TouchableOpacity onPress={() => props.clickAction(data.id)}>
+          <Image
+            source={{
+              uri: `https://image.tmdb.org/t/p/w200/${data.poster_path}`,
+            }}
+            style={styles.cardImage}
+          />
+        </TouchableOpacity>
         <Text style={styles.titleCard} numberOfLines={1}>
           {data.title}
         </Text>

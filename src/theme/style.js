@@ -31,6 +31,9 @@ const title = {
 
 const additional = {
   borderRadius: 8,
+  container: {
+    padding: 10,
+  },
 };
 export default {
   ...basicColor,

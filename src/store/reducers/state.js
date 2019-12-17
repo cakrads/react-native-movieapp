@@ -1,11 +1,9 @@
 export const movieState = {
   detail: null,
   genre: [],
-  popular: {
-    list: null,
-    page: 1,
-  },
-  inTheatre: {
+  popular: null,
+  inTheatre: null,
+  globalList: {
     list: null,
     page: 1,
   },
