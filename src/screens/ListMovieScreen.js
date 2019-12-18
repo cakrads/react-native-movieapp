@@ -9,27 +9,40 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import {getGlobalList} from '../store/actions/movie';
-import LoadingIndicator from '../components/loading/LoadingActivity';
+import {getGlobalList, genreByID} from '../store/actions/movie';
 import GlobalStyle from './../theme/style';
 import ListsCard from './../components/list/ListsCard';
+import ListsCardV2 from '../components/list/ListsCardV2';
+import ListsCardV3 from '../components/list/ListsCardV3';
 
 const ListMovieScreen = props => {
+  // console.log("ListMovieScreen", props.navigation.getParam('data'))
+  const navData = props.navigation.getParam('data');
+
   const dispatch = useDispatch();
   const movieData = useSelector(state => state.movieReducer);
-  const [isLoading, setIsLoading] = useState(true);
   const deviceHeight = Dimensions.get('window').height;
+  const [isLoading, setIsLoading] = useState(true);
+  const [title, setTitlte] = useState(true);
 
   useEffect(() => {
     getData(true);
   }, []);
 
   const getData = async firstInit => {
-    let type = props.listType ? props.listType : 'genre';
+    let type = 'genre' //navData.listType;
     let params = {type: type};
-    if (type == 'genre')
-      params.with_genres = props.genreID ? props.genreID : 28;
-    console.log('params', params);
+    if (type == 'genre') params.with_genres = 28 //navData.genreID;
+    // console.log('params', params);
+    let title =
+      type == 'inTheater'
+        ? 'Now Showing'
+        : type == 'popular'
+        ? 'Popular'
+        : dispatch(genreByID(28));
+        // : dispatch(genreByID(navData.genreID));
+    setTitlte(title);
+
     try {
       setIsLoading(true);
       await dispatch(getGlobalList(firstInit, params));
@@ -43,13 +56,13 @@ const ListMovieScreen = props => {
 
   // ACTION
   const goToDetail = param => {
-      console.log("goToDetail", param);
+    console.log('goToDetail', param);
     // props.navigation.navigate('Detail', {data: {movieID: param}});
   };
 
   return (
     <>
-      <SafeAreaView>
+      <SafeAreaView style={{flex: 1}}>
         <ScrollView
           contentContainerStyle={{minHeight: deviceHeight}}
           contentInsetAdjustmentBehavior="automatic"
@@ -62,7 +75,8 @@ const ListMovieScreen = props => {
             />
           }>
           <View style={GlobalStyle.container}>
-            <ListsCard
+            <Text style={GlobalStyle.titleList}>{title}</Text>
+            <ListsCardV3
               data={movieData.globalList.list}
               clickAction={goToDetail}
             />

@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList, StyleSheet} from 'react-native';
+import {FlatList, StyleSheet, TouchableOpacity} from 'react-native';
 import globalStyle from './../../theme/style';
 import Badge from './Badge';
 
@@ -10,11 +10,16 @@ const HorizontalBadge = props => {
       horizontal
       data={props.data}
       renderItem={({item}) => (
-        <Badge
-          data={item}
-          bgColor={globalStyle.light}
-          textColor={globalStyle.black}
-        />
+        <TouchableOpacity
+          onPress={() =>
+            props.clickAction({listType: 'genre', genreID: item.id})
+          }>
+          <Badge
+            data={item}
+            bgColor={globalStyle.light}
+            textColor={globalStyle.black}
+          />
+        </TouchableOpacity>
       )}
       keyExtractor={(item, index) => index.toString()}
       style={{marginBottom: 16}}

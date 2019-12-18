@@ -5,7 +5,8 @@ const basicColor = {
   success: 'green',
   warning: 'yellow',
   danger: 'red',
-  dark: 'gray',
+  gray: 'gray',
+  dark: 'black',
   light: 'white',
   white: 'white',
   black: 'black',
@@ -13,6 +14,13 @@ const basicColor = {
 
 const title = {
   // title
+  titleList: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textTransform: 'capitalize',
+    color: basicColor.black,
+    marginBottom: 15,
+  },
   titleCard: {
     fontSize: 16,
     fontWeight: 'bold',

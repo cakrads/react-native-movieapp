@@ -76,7 +76,20 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
   return <IconComponent name={iconName} size={25} color={tintColor} />;
 };
 
-const DetailMovieNavigation = createStackNavigator({
+const MovieNavigation = createStackNavigator({
+  ListMovieScreen: {
+    screen: ListMovieScreen,
+    navigationOptions: ({navigation}) => ({
+      header: null,
+      tabBarVisible: false,
+    }),
+  },
+  HomeScreen: {
+    screen: HomeScreen,
+    navigationOptions: ({navigation}) => ({
+      header: null,
+    }),
+  },
   DetailMovieScreen: {
     screen: DetailMovieScreen,
     navigationOptions: ({navigation}) => ({
@@ -88,6 +101,7 @@ const DetailMovieNavigation = createStackNavigator({
           backTitleTxt={'Beranda Mashara'}
         />
       ),
+      tabBarVisible: false,
       // headerStyle: {backgroundColor: Colors.kurma_profile_background},
     }),
   },
@@ -96,10 +110,8 @@ const DetailMovieNavigation = createStackNavigator({
 export default createAppContainer(
   createBottomTabNavigator(
     {
-      List: ListMovieScreen,
-      Home: {screen: HomeScreen},
+      Home: MovieNavigation,
       About: {screen: AboutScreen},
-      Detail: DetailMovieNavigation,
     },
     {
       defaultNavigationOptions: ({navigation}) => ({

@@ -81,6 +81,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -179,6 +180,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@unimodules_react-native-adapter')
     implementation project(':react-native-vector-icons')
     implementation project(':@react-native-community_slider')
     implementation project(':@react-native-community_async-storage')
@@ -186,6 +188,10 @@ dependencies {
     implementation project(':react-native-reanimated')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation project(':unimodules-core')
+    implementation project(':unimodules-react-native-adapter')
+
+    addUnimodulesDependencies()
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

@@ -18,7 +18,7 @@ export const getMovieInTheater = async () => {
   try {
     let params = {
       ...API_KEY,
-      ...addParams,
+      ...APIPATH.movie.inTheatre,
     };
     const API = new api();
     return await API.get(`${BASE_URL}${APIPATH.movie.main}`, params);

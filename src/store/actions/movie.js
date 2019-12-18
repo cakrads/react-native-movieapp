@@ -61,7 +61,7 @@ export const getGlobalList = (firstInit = false, data) => {
     try {
       let page = firstInit ? 1 : getState().movieReducer.globalList.page;
       let params = {...data, page: page};
-      console.log("params", params)
+      console.log('params', params);
       if (firstInit) {
         dispatch({
           type: TYPE.SET_MOVIE_LIST_RESET,
@@ -142,8 +142,10 @@ export const genreByID = genreID => {
   return (dispatch, getState) => {
     try {
       const genreAll = getState().movieReducer.genre;
-      if (genreAll.length == 0) return {id: genreByID, name: '-'};
-      return getGenreAll.filter(x => x.id == genreByID);
+      if (genreAll.length == 0) return '-';
+      let filter = genreAll.find(x => x.id == genreID);
+      console.log('genreByID : ', genreID, filter);
+      return filter.name;
     } catch (error) {
       throw {
         status: false,

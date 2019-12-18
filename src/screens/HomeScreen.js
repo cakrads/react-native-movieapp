@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {globalStyle} from './../theme/style';
+import GlobalStyle from './../theme/style';
 
 import {
   getMoviePopular,
@@ -106,6 +106,11 @@ const HomeScreen = props => {
     props.navigation.navigate('Detail', {data: {movieID: param}});
   };
 
+  const goToList = param => {
+    console.log('goToList: ', param);
+    props.navigation.navigate('ListMovieScreen', {data: param});
+  };
+
   // SHOW COMPONENT
   return (
     <>
@@ -117,13 +122,13 @@ const HomeScreen = props => {
           {/* CAROUSEL */}
           <SimpleCarousel images={carouselImages} />
 
-          <View style={globalStyle.container}>
+          <View style={GlobalStyle.container}>
             {/* IN THEATHER MOVIE */}
             <View style={styles.titleSubPart}>
               <Text style={styles.titleSubPartText}>Now Showing</Text>
               <TouchableOpacity
                 style={styles.titleSubPartButton}
-                onPress={() => goTo('Detail')}>
+                onPress={() => goToList({listType: 'inTheater'})}>
                 <Text>
                   See All{' '}
                   <Ionicons
@@ -150,7 +155,7 @@ const HomeScreen = props => {
               <Text style={styles.titleSubPartText}>Popular Movie</Text>
               <TouchableOpacity
                 style={styles.titleSubPartButton}
-                onPress={() => goTo('Detail')}>
+                onPress={() => goToList({listType: 'popular'})}>
                 <Text>
                   See All <Ionicons name="md-checkmark-circle" size={16} />
                 </Text>
@@ -167,7 +172,7 @@ const HomeScreen = props => {
             {genreLoading ? (
               <LoadingIndicator />
             ) : (
-              <HorizontalBadge data={movieData.genre} />
+              <HorizontalBadge data={movieData.genre} clickAction={goToList} />
             )}
             {/* END MOVIE GENRE */}
           </View>
