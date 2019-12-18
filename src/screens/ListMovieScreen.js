@@ -14,6 +14,7 @@ import GlobalStyle from './../theme/style';
 import ListsCard from './../components/list/ListsCard';
 import ListsCardV2 from '../components/list/ListsCardV2';
 import ListsCardV3 from '../components/list/ListsCardV3';
+import ListsCardV4 from '../components/list/ListsCardV4';
 
 const ListMovieScreen = props => {
   // console.log("ListMovieScreen", props.navigation.getParam('data'))
@@ -30,9 +31,9 @@ const ListMovieScreen = props => {
   }, []);
 
   const getData = async firstInit => {
-    let type = 'genre' //navData.listType;
+    let type = 'genre'; //navData.listType;
     let params = {type: type};
-    if (type == 'genre') params.with_genres = 28 //navData.genreID;
+    if (type == 'genre') params.with_genres = 28; //navData.genreID;
     // console.log('params', params);
     let title =
       type == 'inTheater'
@@ -40,7 +41,7 @@ const ListMovieScreen = props => {
         : type == 'popular'
         ? 'Popular'
         : dispatch(genreByID(28));
-        // : dispatch(genreByID(navData.genreID));
+    // : dispatch(genreByID(navData.genreID));
     setTitlte(title);
 
     try {
@@ -76,7 +77,7 @@ const ListMovieScreen = props => {
           }>
           <View style={GlobalStyle.container}>
             <Text style={GlobalStyle.titleList}>{title}</Text>
-            <ListsCardV3
+            <ListsCardV4
               data={movieData.globalList.list}
               clickAction={goToDetail}
             />
