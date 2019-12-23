@@ -4,11 +4,18 @@ import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {Text, View, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+
+// MOVIE SCREEN
 import HomeScreen from './HomeScreen';
-import AboutScreen from './AboutScreen';
 import DetailMovieScreen from './DetailMovieScreen';
 import ListMovieScreen from './ListMovieScreen';
 import ListMovieScreenFunc from './ListMovieScreenFunc';
+
+// FEATURE SCREEN
+import ToastScreen from './features/miscs/ToastScreen' 
+
+// MISC SCREEN
+import AboutScreen from './AboutScreen';
 
 const BackButton = props => {
   return (
@@ -108,9 +115,20 @@ const MovieNavigation = createStackNavigator({
   },
 });
 
+const FeatureNavigation = createStackNavigator({
+  Toast: {
+    screen: ToastScreen,
+    navigationOptions: ({navigation}) => ({
+      header: null,
+      tabBarVisible: false,
+    }),
+  },
+});
+
 export default createAppContainer(
   createBottomTabNavigator(
     {
+      Feature: FeatureNavigation,
       Home: MovieNavigation,
       About: {screen: ListMovieScreenFunc},
     },

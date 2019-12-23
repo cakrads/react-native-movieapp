@@ -20,9 +20,11 @@ const deviceWidth = Dimensions.get('window').width;
 const ListsCardV4 = props => {
   const dispatch = useDispatch();
 
+  const getGenre = genreID => {
+    return dispatch(genreByID(genreID));
+  };
+
   const ItemList = ({data, index}) => {
-    if (index == 0) console.log('ItemList 0', new Date().getTime());
-    if (index == 19) console.log('ItemList 19', new Date().getTime());
     return (
       <View style={styles.card}>
         <ImageBackground
@@ -41,11 +43,12 @@ const ListsCardV4 = props => {
             </TouchableOpacity>
             <View style={styles.additionalData}>
               <Text style={styles.additionalDataText}>
-                {/* {dateFormater('simple', new Date(data.release_date))} */}
+                {dateFormater('simple', new Date(data.release_date))}
               </Text>
               <Text style={styles.additionalDataText}>
                 {data.vote_average == 0 ? '-' : data.vote_average}
               </Text>
+              <Text>{getGenre(data.genre_ids[0])}</Text>
             </View>
           </View>
         </ImageBackground>

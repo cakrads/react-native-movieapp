@@ -54,16 +54,13 @@ class ListMovieScreen extends Component {
     if (firstInit) this.initData(type);
 
     try {
-      console.log('getData', new Date().getTime());
       await this.props.dispatch(getGlobalList(firstInit, params));
-      console.log('finished');
       this.setState({isLoadingScrolled: false});
-      console.log('isLoadingScrolled', this.state.isLoadingScrolled);
       this.setState({isLoadingPull: false});
     } catch (error) {
       this.setState({isLoadingPull: false});
       this.setState({isLoadingScrolled: false});
-      console.log('Error', error);
+      // console.log('Error', error);
       Alert.alert(error.message);
     }
   }
