@@ -8,6 +8,8 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
+import PropTypes from 'prop-types';
+
 import globalStyle from '../../theme/style';
 
 const deviceWidth = Dimensions.get('window').width;
@@ -56,5 +58,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
+
+ListsCard.PropTypes = {
+  data: PropTypes.object,
+};
 
 export default ListsCard;

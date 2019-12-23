@@ -8,6 +8,8 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
+import PropTypes from 'prop-types';
+
 import GlobalStyle from '../../theme/style';
 
 const deviceWidth = Dimensions.get('window').width;
@@ -73,5 +75,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+ListsCardV3.PropTypes = {
+  data: PropTypes.object,
+};
 
 export default ListsCardV3;

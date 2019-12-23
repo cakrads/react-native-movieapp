@@ -59,9 +59,11 @@ export const getMovieInTheater = () => {
 export const getGlobalList = (firstInit = false, data) => {
   return async (dispatch, getState) => {
     try {
-      let page = firstInit ? 1 : getState().movieReducer.globalList.page;
+      let movieList = getState().movieReducer.globalList;
+      let page = firstInit ? 1 : movieList.page;
       let params = {...data, page: page};
       console.log('params', params);
+
       if (firstInit) {
         dispatch({
           type: TYPE.SET_MOVIE_LIST_RESET,
@@ -70,17 +72,41 @@ export const getGlobalList = (firstInit = false, data) => {
 
       const response = await API.getGlobalList(params);
 
-      dispatch({
-        type: TYPE.SET_MOVIE_LIST,
-        data: response.results,
-        page: page + 1,
-      });
-      // console.log('getState().movieReducer: ', getState().movieReducer);
+      if (response.error) {
+        throw {
+          status: false,
+          message: response.error[0],
+          endOfPage: false,
+        };
+      } else if (
+        response.error &&
+        response.error[0] &&
+        response.error[0].includes('page must be less than or equal to')
+      ) {
+        throw {
+          status: false,
+          message: response.error[0],
+          endOfPage: true,
+        };
+      } else {
+        dispatch({
+          type: TYPE.SET_MOVIE_LIST,
+          data: firstInit
+            ? response.results
+            : [...movieList.list, ...response.results],
+          page: page + 1,
+        });
+        console.log(
+          'getState().movieReducer: ',
+          getState().movieReducer.globalList.list.length,
+        );
 
-      return {
-        status: true,
-        message: 'success',
-      };
+        return {
+          status: true,
+          message: 'success',
+          endOfPage: false,
+        };
+      }
     } catch (error) {
       throw {
         status: false,

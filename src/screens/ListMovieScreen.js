@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {
   View,
   Text,
@@ -8,84 +8,141 @@ import {
   RefreshControl,
   Alert,
   Dimensions,
+  StyleSheet,
 } from 'react-native';
 import {getGlobalList, genreByID} from '../store/actions/movie';
 import GlobalStyle from './../theme/style';
+import LoadingIndicator from './../components/loading/LoadingActivity';
 import ListsCard from './../components/list/ListsCard';
 import ListsCardV2 from '../components/list/ListsCardV2';
 import ListsCardV3 from '../components/list/ListsCardV3';
 import ListsCardV4 from '../components/list/ListsCardV4';
 
-const ListMovieScreen = props => {
-  // console.log("ListMovieScreen", props.navigation.getParam('data'))
-  const navData = props.navigation.getParam('data');
+class ListMovieScreen extends Component {
+  constructor(props) {
+    super(props);
+    navData = this.props.navigation.getParam('data');
+    deviceHeight = Dimensions.get('window').height;
+  }
 
-  const dispatch = useDispatch();
-  const movieData = useSelector(state => state.movieReducer);
-  const deviceHeight = Dimensions.get('window').height;
-  const [isLoading, setIsLoading] = useState(true);
-  const [title, setTitlte] = useState(true);
+  state = {
+    isLoadingPull: false,
+    isLoadingScrolled: false,
+    title: '',
+  };
 
-  useEffect(() => {
-    getData(true);
-  }, []);
+  componentDidMount() {
+    this.getData(true);
+  }
 
-  const getData = async firstInit => {
-    let type = 'genre'; //navData.listType;
-    let params = {type: type};
-    if (type == 'genre') params.with_genres = 28; //navData.genreID;
-    // console.log('params', params);
+  initData(type) {
     let title =
       type == 'inTheater'
         ? 'Now Showing'
         : type == 'popular'
         ? 'Popular'
-        : dispatch(genreByID(28));
-    // : dispatch(genreByID(navData.genreID));
-    setTitlte(title);
+        : this.props.dispatch(genreByID(28));
+    // : this.props.dispatch(genreByID(navData.genreID));
+    this.setState({title: title});
+  }
+
+  async getData(firstInit) {
+    let type = 'genre'; //navData.listType;
+    let params = {type: type};
+    if (type == 'genre') params.with_genres = 28; //navData.genreID;
+
+    if (firstInit) this.initData(type);
 
     try {
-      setIsLoading(true);
-      await dispatch(getGlobalList(firstInit, params));
-      setIsLoading(false);
+      console.log('getData', new Date().getTime());
+      await this.props.dispatch(getGlobalList(firstInit, params));
+      console.log('finished');
+      this.setState({isLoadingScrolled: false});
+      console.log('isLoadingScrolled', this.state.isLoadingScrolled);
+      this.setState({isLoadingPull: false});
     } catch (error) {
-      setIsLoading(false);
+      this.setState({isLoadingPull: false});
+      this.setState({isLoadingScrolled: false});
       console.log('Error', error);
-      Alert.alert(error);
+      Alert.alert(error.message);
     }
-  };
+  }
 
   // ACTION
-  const goToDetail = param => {
+  goToDetail() {
     console.log('goToDetail', param);
     // props.navigation.navigate('Detail', {data: {movieID: param}});
-  };
+  }
 
-  return (
-    <>
-      <SafeAreaView style={{flex: 1}}>
-        <ScrollView
-          contentContainerStyle={{minHeight: deviceHeight}}
-          contentInsetAdjustmentBehavior="automatic"
-          refreshControl={
-            <RefreshControl
-              refreshing={isLoading}
-              onRefresh={() => getData(true)}
-              tintColor={GlobalStyle.danger}
-              colors={[GlobalStyle.primary]}
-            />
-          }>
-          <View style={GlobalStyle.container}>
-            <Text style={GlobalStyle.titleList}>{title}</Text>
-            <ListsCardV4
-              data={movieData.globalList.list}
-              clickAction={goToDetail}
-            />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
+  pullToRequest() {
+    this.setState({isLoadingPull: true});
+    this.getData(true);
+  }
 
-export default ListMovieScreen;
+  getMoreData(nativeEvent) {
+    if (this.isCloseToBottom(nativeEvent)) {
+      if (this.state.isLoadingScrolled) return;
+      this.setState({isLoadingScrolled: true});
+      this.getData(false);
+    }
+  }
+
+  isCloseToBottom({layoutMeasurement, contentOffset, contentSize}) {
+    return (
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 50
+    );
+  }
+
+  render() {
+
+    return (
+      <>
+        <SafeAreaView style={{flex: 1}}>
+          <ScrollView
+            contentContainerStyle={{minHeight: deviceHeight}}
+            contentInsetAdjustmentBehavior="automatic"
+            onScroll={({nativeEvent}) => {
+              this.getMoreData(nativeEvent);
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.isLoadingPull}
+                onRefresh={() => this.pullToRequest(true)}
+                tintColor={GlobalStyle.danger}
+                colors={[GlobalStyle.primary]}
+              />
+            }>
+            <View style={GlobalStyle.container}>
+              <Text style={GlobalStyle.titleList}>{this.state.title}</Text>
+              <ListsCardV4
+                data={this.props.movieData.globalList.list}
+                clickAction={this.goToDetail}
+                actionOnScroll={this.getData}
+              />
+            </View>
+          </ScrollView>
+
+          {this.state.isLoadingScrolled ? (
+            <View style={styles.loadingFooter}>
+              <LoadingIndicator bg={true} />
+            </View>
+          ) : null}
+        </SafeAreaView>
+      </>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  loadingFooter: {
+    position: 'absolute',
+    bottom: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+});
+
+// export default ListMovieScreen;
+export default connect(state => ({
+  movieData: state.movieReducer,
+}))(ListMovieScreen);

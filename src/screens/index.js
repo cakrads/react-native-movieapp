@@ -8,6 +8,7 @@ import HomeScreen from './HomeScreen';
 import AboutScreen from './AboutScreen';
 import DetailMovieScreen from './DetailMovieScreen';
 import ListMovieScreen from './ListMovieScreen';
+import ListMovieScreenFunc from './ListMovieScreenFunc';
 
 const BackButton = props => {
   return (
@@ -111,7 +112,7 @@ export default createAppContainer(
   createBottomTabNavigator(
     {
       Home: MovieNavigation,
-      About: {screen: AboutScreen},
+      About: {screen: ListMovieScreenFunc},
     },
     {
       defaultNavigationOptions: ({navigation}) => ({

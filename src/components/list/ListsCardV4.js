@@ -9,6 +9,8 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
+import PropTypes from 'prop-types';
+
 import GlobalStyle from '../../theme/style';
 import {dateFormater} from './../../helpers/date';
 import {genreByID} from './../../store/actions/movie';
@@ -18,11 +20,9 @@ const deviceWidth = Dimensions.get('window').width;
 const ListsCardV4 = props => {
   const dispatch = useDispatch();
 
-  const getGenre = genreID => {
-    return dispatch(genreByID(genreID));
-  };
-
-  const ItemList = ({data}) => {
+  const ItemList = ({data, index}) => {
+    if (index == 0) console.log('ItemList 0', new Date().getTime());
+    if (index == 19) console.log('ItemList 19', new Date().getTime());
     return (
       <View style={styles.card}>
         <ImageBackground
@@ -41,13 +41,12 @@ const ListsCardV4 = props => {
             </TouchableOpacity>
             <View style={styles.additionalData}>
               <Text style={styles.additionalDataText}>
-                {dateFormater('simple', new Date(data.release_date))}
+                {/* {dateFormater('simple', new Date(data.release_date))} */}
               </Text>
               <Text style={styles.additionalDataText}>
                 {data.vote_average == 0 ? '-' : data.vote_average}
               </Text>
             </View>
-            <Text>{getGenre(data.genre_ids[0])}</Text>
           </View>
         </ImageBackground>
       </View>
@@ -58,9 +57,8 @@ const ListsCardV4 = props => {
     <FlatList
       numColumns={'2'}
       data={props.data}
-      renderItem={({item}) => <ItemList data={item} />}
+      renderItem={({item, index}) => <ItemList data={item} index={index} />}
       keyExtractor={(item, index) => index.toString()}
-      style={{marginBottom: 16}}
     />
   );
 };
@@ -86,7 +84,7 @@ const styles = StyleSheet.create({
   },
   titleCard: {
     ...GlobalStyle.titleCard,
-    marginBottom: 4
+    marginBottom: 4,
   },
   cardImage: {
     marginRight: 10,
@@ -110,5 +108,9 @@ const styles = StyleSheet.create({
     color: GlobalStyle.gray,
   },
 });
+
+ListsCardV4.PropTypes = {
+  data: PropTypes.object,
+};
 
 export default ListsCardV4;
